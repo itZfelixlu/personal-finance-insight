@@ -1,0 +1,141 @@
+{
+    "AMAZON": [
+        "AMZN", 
+        "AMAZON"
+    ],
+    "UBER_EATS": [
+        "UBER EATS", 
+        "UBER *EATS"
+    ],
+    "UBER": [
+        "UBER TRIP", 
+        "UBER *TRIP"
+    ],
+    "DOORDASH": [
+        "DOORDASH"
+    ],
+    "STARBUCKS": [
+        "STARBUCKS"
+    ],
+    "CHIPOTLE": [
+        "CHIPOTLE"
+    ],
+    "IN_N_OUT": [
+        "IN-N-OUT"
+    ],
+    "CHICK_FIL_A": [
+        "CHICK-FIL-A"
+    ],
+    "PANDA_EXPRESS": [
+        "PANDA EXPRESS"
+    ],
+    "SAFEWAY": [
+        "SAFEWAY"
+    ],
+    "TRADER_JOES": [
+        "TRADER JOE"
+    ],
+    "WHOLE_FOODS": [
+        "WHOLE FOODS"
+    ],
+    "H_MART": [
+        "H MART"
+    ],
+    "TARGET": [
+        "TARGET"
+    ],
+    "COSTCO": [
+        "COSTCO"
+    ],
+    "NIKE": [
+        "NIKE"
+    ],
+    "BEST_BUY": [
+        "BEST BUY"
+    ],
+    "APPLE": [
+        "APPLE STORE",
+        "APPLE.COM",
+        "APPLE"
+    ],
+    "SPOTIFY": [
+        "SPOTIFY"
+    ],
+    "STEAM": [
+        "STEAM"
+    ],
+    "NINTENDO": [
+        "NINTENDO"
+    ],
+    "AMC": [
+        "AMC THEATRES"
+    ],
+    "OPENAI": [
+        "OPENAI",
+        "CHATGPT"
+    ],
+    "GOOGLE": [
+        "GOOGLE"
+    ],
+    "PG_AND_E": [
+        "PG&E"
+    ],
+    "XFINITY": [
+        "XFINITY"
+    ],
+    "AT_AND_T": [
+        "AT&T"
+    ],
+    "GREYSTAR": [
+        "GREYSTAR"
+    ],
+    "ZELLE": [
+        "ZELLE"
+    ],
+    "CALTRAIN": [
+        "CALTRAIN"
+    ],
+    "BART": [
+        "BART"
+    ],
+    "LYFT": [
+        "LYFT"
+    ],
+    "CHEVRON": [
+        "CHEVRON"
+    ],
+    "SHELL": [
+        "SHELL"
+    ],
+    "AIRBNB": [
+        "AIRBNB"
+    ],
+    "CVS": [
+        "CVS",
+        "CVS PHARMACY"
+    ],
+    "DMV": [
+        "DMV",
+        "DMV CA RENEWAL"
+    ],
+    "HILTON": [
+        "HILTON",
+        "HILTON HOTELS"
+    ],
+    "KAISER": [
+        "KAISER",
+        "KAISER PERMANENTE"
+    ],
+    "ONLINE_TRANSFER": [
+        "ONLINE TRANSFER",
+        "ONLINE TRANSFER FROM",
+        "ONLINE TRANSFER TO"
+    ],
+    "UNITED_AIRLINES": [
+        "UNITED",
+        "UNITED AIRLINES"
+    ],
+    "WALGREENS": [
+        "WALGREENS"
+    ]
+}
