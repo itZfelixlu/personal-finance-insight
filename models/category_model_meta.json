@@ -1,0 +1,18 @@
+{
+  "categories": [
+    "Dining",
+    "Entertainment",
+    "Grocery",
+    "Healthcare",
+    "Housing",
+    "Shopping",
+    "Subscription",
+    "Transfer",
+    "Transport",
+    "Travel",
+    "Utilities"
+  ],
+  "n_training_rows": 2304,
+  "vectorizer": "tfidf(1,2), min_df=2",
+  "classifier": "LinearSVC(class_weight=balanced)"
+}
