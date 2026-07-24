@@ -1,10 +1,15 @@
 import pandas as pd
-import plotly.express as px
 import streamlit as st
 
-from src.categorizer import categorize_transactions
-from src.data_loader import load_transactions_csv
-from src.preprocessing import preprocess_transactions
+from src.dashboard_components import (
+    render_month_comparison,
+    render_spending_chart,
+)
+from src.spending_analysis import (
+    analyze_month,
+    compare_spending_summaries,
+)
+from src.transaction_pipeline import combine_uploaded_files
 
 
 st.set_page_config(
@@ -12,122 +17,6 @@ st.set_page_config(
     page_icon="💳",
     layout="wide",
 )
-
-
-def process_uploaded_file(uploaded_file):
-    """Clean and categorize one uploaded Chase statement."""
-    raw_df = load_transactions_csv(uploaded_file)
-    clean_df = preprocess_transactions(raw_df)
-
-    # Synthetic data contains ground-truth labels. Drop them so both synthetic
-    # and real statements go through the same production model.
-    clean_df = clean_df.drop(columns=["Category"], errors="ignore")
-
-    categorized_df = categorize_transactions(clean_df)
-    categorized_df["Source File"] = uploaded_file.name
-    return categorized_df
-
-
-def combine_uploaded_files(uploaded_files):
-    """Process valid files and collect user-facing errors separately."""
-    dataframes = []
-    errors = []
-
-    for uploaded_file in uploaded_files:
-        try:
-            dataframes.append(process_uploaded_file(uploaded_file))
-        except Exception as error:
-            errors.append(f"Could not process {uploaded_file.name}: {error}")
-
-    if not dataframes:
-        return pd.DataFrame(), errors
-
-    combined_df = pd.concat(dataframes, ignore_index=True)
-    combined_df["Month"] = combined_df["Date"].dt.to_period("M").astype(str)
-    return combined_df, errors
-
-
-def prepare_month_data(transactions, selected_month):
-    """Return all monthly transactions and spending-only transactions."""
-    monthly_df = transactions[
-        transactions["Month"] == selected_month
-    ].copy()
-
-    expenses_df = monthly_df[
-        (monthly_df["Amount"] < 0)
-        & (monthly_df["Category"] != "Transfer")
-    ].copy()
-    expenses_df["Spend"] = -expenses_df["Amount"]
-
-    return monthly_df, expenses_df
-
-
-def summarize_spending(expenses):
-    """Calculate category totals used by metrics and future charts."""
-    category_spending = (
-        expenses
-        .groupby("Category", as_index=False)["Spend"]
-        .sum()
-        .sort_values("Spend", ascending=False)
-        .reset_index(drop=True)
-    )
-
-    total_spending = expenses["Spend"].sum()
-    transaction_count = len(expenses)
-    top_category = (
-        category_spending.iloc[0]["Category"]
-        if not category_spending.empty
-        else "N/A"
-    )
-
-    return {
-        "category_spending": category_spending,
-        "total_spending": total_spending,
-        "transaction_count": transaction_count,
-        "top_category": top_category,
-    }
-
-
-def render_spending_chart(category_spending, selected_month):
-    """Render the category spending donut chart and source data."""
-    st.subheader(f"Spending by category — {selected_month}")
-
-    if category_spending.empty:
-        st.info("No expense transactions found for this month.")
-        return
-
-    figure = px.pie(
-        category_spending,
-        names="Category",
-        values="Spend",
-        hole=0.4,
-    )
-    figure.update_traces(
-        textinfo="none",
-        hovertemplate=(
-            "<b>%{label}</b><br>"
-            "Spending: $%{value:,.2f}<br>"
-            "Share: %{percent:.1%}"
-            "<extra></extra>"
-        ),
-    )
-    figure.update_layout(
-        margin={"t": 10, "r": 10, "b": 10, "l": 10},
-        legend_title_text="Category",
-    )
-
-    st.plotly_chart(
-        figure,
-        use_container_width=True,
-        key=f"spending-chart-{selected_month}",
-    )
-
-    with st.expander("View category totals"):
-        st.dataframe(
-            category_spending,
-            use_container_width=True,
-            hide_index=True,
-        )
 
 
 def main():
@@ -171,11 +60,57 @@ def main():
         options=available_months,
     )
 
-    monthly_df, expenses_df = prepare_month_data(
+    comparison_month = None
+
+    if len(available_months) > 1:
+        enable_comparison = st.toggle(
+            "Compare with another month"
+        )
+
+        if enable_comparison:
+            comparison_options = [
+                month for month in available_months if month != selected_month
+            ]
+            previous_month = str(
+                pd.Period(selected_month, freq="M") - 1
+            )
+
+            default_comparison = (
+                previous_month
+                if previous_month in comparison_options
+                else comparison_options[0]
+            )
+
+            comparison_month = st.selectbox(
+                "Compare with",
+                options=comparison_options,
+                index=comparison_options.index(default_comparison),
+            )
+    else:
+        st.caption(
+            "Upload transactions from another month "
+            "to enable comparison."
+        )
+
+    current_analysis = analyze_month(
         combined_df,
         selected_month,
     )
-    summary = summarize_spending(expenses_df)
+    monthly_df = current_analysis["transactions"]
+    summary = current_analysis["summary"]
+
+    comparison = None
+
+    if comparison_month is not None:
+        comparison_analysis = analyze_month(
+            combined_df,
+            comparison_month,
+        )
+
+        comparison = compare_spending_summaries(
+            summary,
+            comparison_analysis["summary"],
+        )
 
     st.caption(
         f"Showing {len(monthly_df):,} transactions for {selected_month}."
@@ -196,6 +131,12 @@ def main():
         f"{summary['transaction_count']:,}",
     )
     metric_3.metric("Top category", summary["top_category"])
+
+    render_month_comparison(
+        comparison,
+        selected_month,
+        comparison_month,
+    )
 
     st.subheader("Uploaded data preview")
     st.dataframe(
