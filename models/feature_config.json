@@ -1,0 +1,22 @@
+{
+  "feature_columns": [
+    "dining_ratio",
+    "grocery_ratio",
+    "shopping_ratio",
+    "transport_ratio",
+    "total_spend",
+    "txn_count",
+    "avg_txn"
+  ],
+  "ratio_categories": [
+    "Dining",
+    "Grocery",
+    "Shopping",
+    "Transport"
+  ],
+  "n_clusters": 4,
+  "silhouette": 0.214,
+  "scaler": "StandardScaler",
+  "model": "KMeans",
+  "n_training_weeks": 53
+}
