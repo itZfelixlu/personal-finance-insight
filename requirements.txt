@@ -2,6 +2,8 @@ pandas
 numpy
 scikit-learn
 matplotlib
+plotly
 joblib
 jupyter
 streamlit
+openai

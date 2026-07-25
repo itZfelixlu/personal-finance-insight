@@ -27,9 +27,9 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler
 
-from src.data_loader import load_transactions_csv
-from src.preprocessing import preprocess_transactions
-from src.weekly_features import (
+from src.pipeline.data_loader import load_transactions_csv
+from src.pipeline.preprocessing import preprocess_transactions
+from src.ml.weekly_features import (
     FEATURE_COLUMNS,
     RATIO_CATEGORIES,
     build_weekly_features,
