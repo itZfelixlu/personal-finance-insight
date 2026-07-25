@@ -2,7 +2,6 @@ import pandas as pd
 
 
 def _prepare_month_data(transactions, selected_month):
-    """Return all monthly transactions and spending-only transactions."""
     monthly_df = transactions[
         transactions["Month"] == selected_month
     ].copy()
@@ -17,7 +16,6 @@ def _prepare_month_data(transactions, selected_month):
 
 
 def _summarize_spending(expenses):
-    """Calculate category totals used by metrics and charts."""
     category_spending = (
         expenses
         .groupby("Category", as_index=False)["Spend"]
@@ -43,7 +41,6 @@ def _summarize_spending(expenses):
 
 
 def analyze_month(transactions, month):
-    """Prepare transaction data and spending summary for one month."""
     monthly_df, expenses_df = _prepare_month_data(
         transactions,
         month,
@@ -57,7 +54,6 @@ def analyze_month(transactions, month):
 
 
 def compare_spending_summaries(current_summary, comparison_summary):
-    """Compare total and category spending between two month summaries."""
     current_categories = (
         current_summary["category_spending"]
         [["Category", "Spend"]]

@@ -22,9 +22,9 @@ from pathlib import Path
 
 import joblib
 
-from src.weekly_features import feature_matrix
+from src.ml.weekly_features import feature_matrix
 
-MODELS_DIR = Path(__file__).parent.parent / "models"
+MODELS_DIR = Path(__file__).parents[2] / "models"
 SCALER_PATH = MODELS_DIR / "weekly_scaler.pkl"
 MODEL_PATH = MODELS_DIR / "spending_pattern_model.pkl"
 NAMES_PATH = MODELS_DIR / "cluster_names.json"

@@ -25,8 +25,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.svm import LinearSVC
 
-from src.data_loader import load_transactions_csv
-from src.preprocessing import preprocess_transactions
+from src.pipeline.data_loader import load_transactions_csv
+from src.pipeline.preprocessing import preprocess_transactions
 
 DATA_FILE = PROJECT_ROOT / "inputs" / "synthetic_chase_statement_2025.csv"
 

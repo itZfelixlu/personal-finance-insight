@@ -118,7 +118,7 @@ def build_weekly_features(df: pd.DataFrame) -> pd.DataFrame:
 def load_feature_config(path=None) -> dict:
     """Load the frozen feature ordering exported during training."""
     if path is None:
-        path = Path(__file__).parent.parent / "models" / "feature_config.json"
+        path = Path(__file__).parents[2] / "models" / "feature_config.json"
     import json
 
     with open(path) as f:

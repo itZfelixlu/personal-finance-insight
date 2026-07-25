@@ -26,4 +26,3 @@ def load_transactions_csv(file_path):
         )
 
     return df
-

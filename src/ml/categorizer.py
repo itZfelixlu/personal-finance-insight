@@ -14,7 +14,7 @@ from pathlib import Path
 
 import joblib
 
-MODEL_PATH = Path(__file__).parent.parent / "models" / "category_model.pkl"
+MODEL_PATH = Path(__file__).parents[2] / "models" / "category_model.pkl"
 
 # The model was trained on the transaction Description text, so we predict from
 # the same column here (train/inference must use the same input).

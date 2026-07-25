@@ -3,7 +3,6 @@ import streamlit as st
 
 
 def render_spending_chart(category_spending, selected_month):
-    """Render the category spending donut chart and source data."""
     st.subheader(f"Spending by category — {selected_month}")
 
     if category_spending.empty:
@@ -96,3 +95,75 @@ def render_month_comparison(
                 ),
             },
         )
+
+
+def _render_pattern_table(weekly_patterns):
+    """Render a compact, user-facing view of weekly model predictions."""
+    pattern_table = weekly_patterns[
+        [
+            "Week",
+            "PatternName",
+            "total_spend",
+            "txn_count",
+        ]
+    ].copy()
+    pattern_table["Week"] = pattern_table["Week"].dt.date
+    pattern_table = pattern_table.rename(
+        columns={
+            "Week": "Week starting",
+            "PatternName": "Detected pattern",
+            "total_spend": "Weekly spending",
+            "txn_count": "Transactions",
+        }
+    )
+
+    st.dataframe(
+        pattern_table,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Week starting": st.column_config.DateColumn(
+                format="MMM DD, YYYY"
+            ),
+            "Weekly spending": st.column_config.NumberColumn(
+                format="$%.2f"
+            ),
+            "Transactions": st.column_config.NumberColumn(format="%d"),
+        },
+    )
+
+
+def render_weekly_patterns(
+    weekly_patterns,
+    selected_month,
+    comparison_weekly_patterns=None,
+    comparison_month=None,
+):
+    """Show the KMeans weekly-pattern outputs used by the AI insight."""
+    st.markdown("#### Detected weekly spending patterns")
+    st.caption(
+        "These patterns are predicted by the unsupervised model and "
+        "used as the main evidence for the AI explanation."
+    )
+
+    if weekly_patterns.empty:
+        st.info(f"No weekly spending pattern was found for {selected_month}.")
+        return
+
+    if comparison_weekly_patterns is None:
+        _render_pattern_table(weekly_patterns)
+        return
+
+    current_tab, comparison_tab = st.tabs(
+        [selected_month, comparison_month]
+    )
+    with current_tab:
+        _render_pattern_table(weekly_patterns)
+    with comparison_tab:
+        if comparison_weekly_patterns.empty:
+            st.info(
+                f"No weekly spending pattern was found for "
+                f"{comparison_month}."
+            )
+        else:
+            _render_pattern_table(comparison_weekly_patterns)

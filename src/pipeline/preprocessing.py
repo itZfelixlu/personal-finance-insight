@@ -6,7 +6,7 @@ import pandas as pd
 
 def load_merchant_mapping():
     mapping_path = (
-        Path(__file__).parent.parent
+        Path(__file__).parents[2]
         / "config"
         / "merchant_mapping.json"
     )
