@@ -101,18 +101,17 @@ def _render_pattern_table(weekly_patterns):
     """Render a compact, user-facing view of weekly model predictions."""
     pattern_table = weekly_patterns[
         [
-            "Week",
+            "AnalysisPeriod",
             "PatternName",
             "total_spend",
             "txn_count",
         ]
     ].copy()
-    pattern_table["Week"] = pattern_table["Week"].dt.date
     pattern_table = pattern_table.rename(
         columns={
-            "Week": "Week starting",
+            "AnalysisPeriod": "Analyzed period",
             "PatternName": "Detected pattern",
-            "total_spend": "Weekly spending",
+            "total_spend": "Period spending",
             "txn_count": "Transactions",
         }
     )
@@ -122,10 +121,7 @@ def _render_pattern_table(weekly_patterns):
         use_container_width=True,
         hide_index=True,
         column_config={
-            "Week starting": st.column_config.DateColumn(
-                format="MMM DD, YYYY"
-            ),
-            "Weekly spending": st.column_config.NumberColumn(
+            "Period spending": st.column_config.NumberColumn(
                 format="$%.2f"
             ),
             "Transactions": st.column_config.NumberColumn(format="%d"),
@@ -143,7 +139,10 @@ def render_weekly_patterns(
     st.markdown("#### Detected weekly spending patterns")
     st.caption(
         "These patterns are predicted by the unsupervised model and "
-        "used as the main evidence for the AI explanation."
+        "used as the main evidence for the AI explanation. Month-boundary "
+        "rows are labeled as partial weeks and include only the displayed "
+        "month's transactions. Treat partial-week patterns as "
+        "lower-confidence signals."
     )
 
     if weekly_patterns.empty:

@@ -1,6 +1,41 @@
 import pandas as pd
 
 
+def add_analysis_period_labels(weekly_patterns, selected_month):
+    """Label boundary weeks with the dates actually analyzed in the month."""
+    out = weekly_patterns.copy()
+    month = pd.Period(selected_month, freq="M")
+    month_start = month.start_time.normalize()
+    month_end = month.end_time.normalize()
+
+    labels = []
+    partial_flags = []
+
+    for week in out["Week"]:
+        week_start = pd.Timestamp(week).normalize()
+        week_end = week_start + pd.Timedelta(days=6)
+        analyzed_start = max(week_start, month_start)
+        analyzed_end = min(week_end, month_end)
+        is_partial = (
+            analyzed_start != week_start
+            or analyzed_end != week_end
+        )
+
+        label = (
+            f"{analyzed_start:%b %d}–"
+            f"{analyzed_end:%b %d, %Y}"
+        )
+        if is_partial:
+            label += " (partial week)"
+
+        labels.append(label)
+        partial_flags.append(is_partial)
+
+    out["AnalysisPeriod"] = labels
+    out["IsPartialWeek"] = partial_flags
+    return out
+
+
 def _prepare_month_data(transactions, selected_month):
     monthly_df = transactions[
         transactions["Month"] == selected_month

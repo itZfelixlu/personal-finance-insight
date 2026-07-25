@@ -16,6 +16,7 @@ from src.ui.profile_components import (
     render_user_profile,
 )
 from src.pipeline.spending_analysis import (
+    add_analysis_period_labels,
     analyze_month,
     compare_spending_summaries,
 )
@@ -177,16 +178,20 @@ def main():
     if st.button("Generate AI Insight", type="primary"):
         try:
             # Weekly pattern prediction and personalized LLM insight generation
-            weekly_patterns = predict_patterns(
-                build_weekly_features(monthly_df)
+            weekly_patterns = add_analysis_period_labels(
+                predict_patterns(build_weekly_features(monthly_df)),
+                selected_month,
             )
             comparison_weekly_patterns = None
 
             if comparison_analysis is not None:
-                comparison_weekly_patterns = predict_patterns(
-                    build_weekly_features(
-                        comparison_analysis["transactions"]
-                    )
+                comparison_weekly_patterns = add_analysis_period_labels(
+                    predict_patterns(
+                        build_weekly_features(
+                            comparison_analysis["transactions"]
+                        )
+                    ),
+                    comparison_month,
                 )
 
             st.session_state["weekly_patterns"] = weekly_patterns

@@ -45,9 +45,12 @@ def _format_weekly_patterns(weekly_patterns):
 
     lines = []
     for _, row in weekly_patterns.iterrows():
-        week = row["Week"].strftime("%Y-%m-%d")
+        period = row.get(
+            "AnalysisPeriod",
+            f"Week of {row['Week']:%Y-%m-%d}",
+        )
         lines.append(
-            f"- Week of {week}: {row['PatternName']}; "
+            f"- {period}: {row['PatternName']}; "
             f"total {_format_money(row['total_spend'])}; "
             f"{int(row['txn_count'])} transactions; "
             f"average {_format_money(row['avg_txn'])}; "
@@ -75,7 +78,8 @@ def _format_pattern_story(weekly_patterns):
     )
 
     timeline = " -> ".join(
-        f"{row['Week'].strftime('%b %d')}: {row['PatternName']}"
+        f"{row.get('AnalysisPeriod', row['Week'].strftime('%b %d'))}: "
+        f"{row['PatternName']}"
         for _, row in weekly_patterns.iterrows()
     )
 
@@ -324,6 +328,10 @@ def generate_insight(
             "report. Make the weekly spending patterns—not simple monthly "
             "aggregation—the central evidence for every insight. Treat pattern "
             "names as useful behavioral signals, not proven facts. "
+            "Treat rows marked partial week as lower-confidence supporting "
+            "signals. Base the main interpretation on full weeks whenever "
+            "possible, and never use a partial week alone to claim recurring "
+            "behavior or a monthly trend. "
             "Do not provide investment, tax, or legal advice."
         ),
         input=prompt,
